@@ -112,6 +112,11 @@
 			height: 600px;
 			width: 960px;
 		}
+		div.readme {
+			width: 600px;
+			text-align: left;
+			margin-left: 600px;
+		}
 		-->
 		</style>
 	</head>
@@ -132,5 +137,44 @@
 			</div>
 		</div>
 		<p class="footer">&laquo; created with <a href="http://unity3d.com/unity/" title="Go to unity3d.com">Unity</a> &raquo;</p>
+		<div class="readme">
+		<b>Controls:</b><br/>
+		In Game mode:<br/>
+		WASD/Arrow keys to move<br/><br/>
+		
+		In Editor mode: <br/>
+		Camera is controlled with left Alt + mouse buttons (left click dolly, middle click pan).<br/>
+		Click UI items to view past revisions or add new objects to the scene.<br/><br/><br/>
+		
+		
+		<b>How to use it:</b><br/>
+		By default the editor screen will be displayed. A basic object manipulation script allows you to select, move, rotate, and scale objects in the game world with the mouse. Along the right side of the screen are objects that can be placed in the world. Clicking one of these buttons will spawn a new instance of that object at the world origin.<br/><br/>
+		
+		Along the left side of the screen are past revisions of this level (stored in Git version control). Clicking on these buttons will reload the level as it existed in that revision.<br/><br/>
+		
+		Finally, clicking "Play" will hide all editor buttons and allow you to playtest your level.<br/><br/><br/>
+		
+		
+		<b>How it works:</b><br/>
+		The unity-based editor is served as a static html page. On startup, a script using the WWW module requests data from a node.js server running on the same heroku domain. The request looks a bit like this:<br/><br/>
+		
+		string url = "http://ancient-badlands-5927.herokuapp.com/";<br/>
+		WWW www = new WWW(url);<br/><br/>
+
+		yield return www;<br/><br/>
+
+		if (www.error == null)<br/>
+		{<br/>
+			Debug.Log("Request Ok!: " + www.data);<br/>
+		} else {<br/>
+			Debug.Log("Request Error: "+ www.error);<br/>
+		}<br/><br/>
+
+		On the server side, node.js spawns a git child process to fetch all revision data. In this case it is only looking at a single file: the level data, which is stored in a simple xml format. The revision data is returned to the Unity editor which displays each revision as a list element.<br/><br/>
+		
+		If you click on a particular revision, another request will be made to fetch the xml level data from that revision. The new level data will then be reflected in the editor, allowing the user to "look back" across a number of revisions without having to leave the level editor. <br/><br/>
+		
+		Committing at this point is very bare-bones; this is primarily a single-person tool and there is currently no easy way to handle conflicts. All commits will force-overwrite any conflicting changes.
+		</readme>
 	</body>
 </html>
