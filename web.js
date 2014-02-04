@@ -1,8 +1,8 @@
 var path = require('path');
 var express = require("express");
 var logfmt = require("logfmt");
+var child_process = require("child_process");
 var app = express();
-var asyncblock = require("asyncblock");
 
 app.use(logfmt.requestLogger());
 
@@ -11,15 +11,9 @@ app.use(express.static(path.join(__dirname, 'Unity')));
 
 app.get('/', function(request, response) {
 
-	asyncblock(function(flow) {
-		var dir = spawn('ls');
-		
-		var result = flow.wait();
-		console.log(result);
-
-		response.writeHead(200, {"Content-Type": "text/plain"});
-		response.write("Spawned child process:" + result);
-		response.end();
+	child_process.exec('git log --pretty=format:"<entry><author>%an</author><commit_date>%cd</commit_date><message_body>%b</message_body></entry>" Unity/Heroku.html', function(error, stdout, stderr) {
+		console.log("Log: " + error + " " + stdout + " " + stderr);
+		response.send(stdout);
 	});
   //res.send('Hello Heroku World!');
 });
