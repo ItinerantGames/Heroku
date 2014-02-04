@@ -4,6 +4,7 @@ var logfmt = require("logfmt");
 var child_process = require("child_process");
 var app = express();
 
+// Test comment
 app.use(logfmt.requestLogger());
 
 // Serve static Unity files
